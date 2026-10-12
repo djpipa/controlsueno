@@ -157,3 +157,9 @@ dialog input, dialog select {
 }
 .toast .link { color: #a5b4fc; font-weight: 700; }
 [hidden] { display: none !important; }
+
+.marca { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.marca h1 { cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.version { font-size: .75rem; color: var(--suave); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.item .quien { display: block; color: var(--suave); font-size: .8rem; }
+.acciones-resumen { gap: 8px; }

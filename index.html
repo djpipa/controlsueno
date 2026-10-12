@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#4f46e5">
-  <title>Control Sueño</title>
+  <title>Rutina Cielo</title>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icono.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icono.svg">
@@ -12,7 +12,10 @@
 </head>
 <body>
   <header class="barra">
-    <h1>Control Sueño</h1>
+    <div class="marca">
+      <h1 id="titulo" title="Tocá para cambiar el nombre">Rutina Cielo</h1>
+      <span id="version" class="version"></span>
+    </div>
     <div class="cuenta">
       <span id="usuario" class="usuario"></span>
       <button id="btnSalir" class="link" hidden>Salir</button>
@@ -64,6 +67,7 @@
 
     <section id="vistaResumen" class="vista" hidden>
       <div class="acciones-resumen">
+        <button id="btnPdf" class="secundario">Exportar PDF</button>
         <button id="btnCopiar" class="secundario">Copiar resumen</button>
       </div>
       <div id="resumen"></div>
