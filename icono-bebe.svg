@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Ícono de Rutina Cielo: carita de bebé dormido sobre rosa pastel -->
+  <rect width="100" height="100" rx="22" fill="#f9b8d0"/>
+  <circle cx="50" cy="55" r="32" fill="#ffe3d3"/>
+  <circle cx="18" cy="55" r="7" fill="#ffd5c2"/>
+  <circle cx="82" cy="55" r="7" fill="#ffd5c2"/>
+  <path d="M50 23c-2-6 3-11 9-9-4 1-5 4-3 7" fill="none" stroke="#c7608a" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M33 52q5 5 10 0M57 52q5 5 10 0" fill="none" stroke="#6b3a54" stroke-width="3.5" stroke-linecap="round"/>
+  <circle cx="30" cy="64" r="6" fill="#f7a1bf" opacity=".7"/>
+  <circle cx="70" cy="64" r="6" fill="#f7a1bf" opacity=".7"/>
+  <circle cx="50" cy="71" r="7" fill="#e27aa3"/>
+  <circle cx="50" cy="71" r="3" fill="#fff5f8"/>
+</svg>

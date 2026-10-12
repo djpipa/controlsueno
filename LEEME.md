@@ -14,7 +14,7 @@ La app ya funciona sin configurar nada, en **modo prueba**: guarda los registros
 ## 2. Publicarla en GitHub Pages
 
 1. En https://github.com creá un repositorio nuevo, por ejemplo `controlsueno` (público, que es lo que permite Pages gratis).
-2. Tocá **Add file > Upload files** y subí todos los archivos de esta carpeta (`index.html`, `app.js`, `styles.css`, `firebase-config.js`, `manifest.json`, `icono.svg`). `LEEME.md` y `firestore.rules` son opcionales.
+2. Tocá **Add file > Upload files** y subí todos los archivos de esta carpeta (`index.html`, `app.js`, `styles.css`, `firebase-config.js`, `manifest.json`, `icono-bebe.svg`). `LEEME.md` y `firestore.rules` son opcionales.
 3. En el repositorio, **Settings > Pages**, en **Branch** elegí `main` y carpeta `/ (root)`, y guardá. En uno o dos minutos aparece la dirección, del estilo `https://TU_USUARIO.github.io/controlsueno/`.
 
 ## 3. Usarla en el celular
