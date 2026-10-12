@@ -10,6 +10,9 @@ const TIPOS = {
   mamadera:     { nombre: "Mamadera",       emoji: "🍼" },
   pis:          { nombre: "Pis",            emoji: "💧" },
   caca:         { nombre: "Caca",           emoji: "💩" },
+  bano:         { nombre: "Baño",           emoji: "🚿" },
+  comida:       { nombre: "Comida",         emoji: "🥦" },
+  medicacion:   { nombre: "Medicación",     emoji: "💊" },
 };
 
 const $ = (id) => document.getElementById(id);
@@ -176,6 +179,9 @@ function totalesDia(k) {
   if (cuenta("mamadera")) partes.push(`Mamadera ${cuenta("mamadera")}`);
   if (cuenta("pis")) partes.push(`Pis ${cuenta("pis")}`);
   if (cuenta("caca")) partes.push(`Caca ${cuenta("caca")}`);
+  if (cuenta("bano")) partes.push(`Baño ${cuenta("bano")}`);
+  if (cuenta("comida")) partes.push(`Comida ${cuenta("comida")}`);
+  if (cuenta("medicacion")) partes.push(`Medicación ${cuenta("medicacion")}`);
   return partes.join(" · ");
 }
 
@@ -206,7 +212,7 @@ function dibujarEstado() {
   const ahora = Date.now();
   const ultimo = (tipos) => [...eventos].reverse().find((e) => tipos.includes(e.tipo));
   const sueno = ultimo(["inicio_sueno", "fin_sueno"]);
-  const comida = ultimo(["teta", "mamadera"]);
+  const comida = ultimo(["teta", "mamadera", "comida"]);
   const partes = [];
   if (sueno?.tipo === "inicio_sueno") partes.push(`😴 <strong>Durmiendo</strong> desde las ${hora(sueno.ts)} (${duracion(ahora - sueno.ts)})`);
   else if (sueno) partes.push(`🌞 <strong>Despierto</strong> desde las ${hora(sueno.ts)} (${duracion(ahora - sueno.ts)})`);

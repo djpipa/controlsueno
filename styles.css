@@ -12,6 +12,9 @@
   --mamadera: #0ea5e9;
   --pis: #eab308;
   --caca: #92400e;
+  --bano: #06b6d4;
+  --comida: #16a34a;
+  --medicacion: #e11d48;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -95,6 +98,9 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .evento[data-tipo="mamadera"] { background: var(--mamadera); }
 .evento[data-tipo="pis"] { background: var(--pis); color: #3b2f00; }
 .evento[data-tipo="caca"] { background: var(--caca); }
+.evento[data-tipo="bano"] { background: var(--bano); }
+.evento[data-tipo="comida"] { background: var(--comida); }
+.evento[data-tipo="medicacion"] { background: var(--medicacion); grid-column: 1 / -1; }
 .evento:disabled { opacity: .6; }
 
 .pestanas { display: flex; gap: 6px; margin: 18px 0 8px; border-bottom: 1px solid var(--borde); }
