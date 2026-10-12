@@ -1,0 +1,9 @@
+{
+  "name": "Control Sueño",
+  "short_name": "Sueño",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f5f5fb",
+  "theme_color": "#4f46e5",
+  "icons": [{ "src": "icono.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

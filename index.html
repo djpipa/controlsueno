@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#4f46e5">
+  <title>Control Sueño</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icono.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icono.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="barra">
+    <h1>Control Sueño</h1>
+    <div class="cuenta">
+      <span id="usuario" class="usuario"></span>
+      <button id="btnSalir" class="link" hidden>Salir</button>
+    </div>
+  </header>
+
+  <!-- Pantalla de ingreso (solo si Firebase está configurado) -->
+  <section id="pantallaLogin" class="login" hidden>
+    <p>Ingresá con tu cuenta de Google para guardar y ver los registros desde cualquier celular.</p>
+    <button id="btnLogin" class="primario">Ingresar con Google</button>
+    <p id="loginError" class="error"></p>
+  </section>
+
+  <main id="app" hidden>
+    <p id="avisoLocal" class="aviso" hidden>
+      Modo prueba: los datos se guardan solo en este celular. Completá <code>firebase-config.js</code> para usar Firebase.
+    </p>
+
+    <section class="estado" id="estadoSueno"></section>
+
+    <section class="botones" aria-label="Registrar evento">
+      <button class="evento" data-tipo="inicio_sueno"><span class="emoji">😴</span>Comienzo sueño</button>
+      <button class="evento" data-tipo="fin_sueno"><span class="emoji">🌞</span>Fin sueño</button>
+      <button class="evento" data-tipo="teta"><span class="emoji">🤱</span>Teta</button>
+      <button class="evento" data-tipo="mamadera"><span class="emoji">🍼</span>Mamadera</button>
+      <button class="evento" data-tipo="pis"><span class="emoji">💧</span>Pis</button>
+      <button class="evento" data-tipo="caca"><span class="emoji">💩</span>Caca</button>
+    </section>
+
+    <nav class="pestanas" role="tablist">
+      <button class="pestana activa" data-vista="hoy" role="tab">Hoy</button>
+      <button class="pestana" data-vista="resumen" role="tab">Resumen por día</button>
+    </nav>
+
+    <section id="vistaHoy" class="vista">
+      <ul id="listaHoy" class="lista"></ul>
+      <button id="btnManual" class="link agregar">+ Agregar uno con otra hora</button>
+    </section>
+
+    <section id="vistaResumen" class="vista" hidden>
+      <div class="acciones-resumen">
+        <button id="btnCopiar" class="secundario">Copiar resumen</button>
+      </div>
+      <div id="resumen"></div>
+    </section>
+  </main>
+
+  <!-- Editar / borrar un registro -->
+  <dialog id="dlgEditar">
+    <form method="dialog" id="formEditar">
+      <h2 id="dlgTitulo">Editar registro</h2>
+      <label>Tipo
+        <select id="edTipo"></select>
+      </label>
+      <label>Fecha y hora
+        <input type="datetime-local" id="edFecha" required>
+      </label>
+      <label>Nota (opcional)
+        <input type="text" id="edNota" maxlength="140" placeholder="Ej: 120 ml">
+      </label>
+      <div class="dlg-botones">
+        <button type="button" id="edBorrar" class="peligro">Borrar</button>
+        <span class="espacio"></span>
+        <button type="button" id="edCancelar" class="secundario">Cancelar</button>
+        <button type="submit" id="edGuardar" class="primario">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" hidden>
+    <span id="toastTexto"></span>
+    <button id="toastDeshacer" class="link">Deshacer</button>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
