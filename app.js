@@ -58,14 +58,21 @@ async function iniciarFirebase() {
   const col = fs.collection(db, "eventos");
   let desuscribir = null;
 
-  $("btnLogin").onclick = async () => {
+  // El usuario se guarda en Firebase como un correo interno: "diego" -> "diego@<proyecto>.firebaseapp.com".
+  const aCorreo = (u) => (u.includes("@") ? u : `${u}@${firebaseConfig.authDomain}`).trim().toLowerCase();
+  $("formLogin").onsubmit = async (ev) => {
+    ev.preventDefault();
     $("loginError").textContent = "";
-    const proveedor = new auth.GoogleAuthProvider();
+    $("btnLogin").disabled = true;
     try {
-      await auth.signInWithPopup(a, proveedor);
+      await auth.signInWithEmailAndPassword(a, aCorreo($("loginUsuario").value), $("loginPass").value);
+      $("loginPass").value = "";
     } catch (e) {
-      if (e.code === "auth/popup-blocked") return auth.signInWithRedirect(a, proveedor);
-      $("loginError").textContent = "No se pudo ingresar: " + (e.code || e.message);
+      $("loginError").textContent = ["auth/invalid-credential", "auth/wrong-password", "auth/user-not-found", "auth/invalid-email"].includes(e.code)
+        ? "Usuario o contraseña incorrectos."
+        : "No se pudo ingresar: " + (e.code || e.message);
+    } finally {
+      $("btnLogin").disabled = false;
     }
   };
   $("btnSalir").onclick = () => auth.signOut(a);
@@ -73,7 +80,7 @@ async function iniciarFirebase() {
   auth.onAuthStateChanged(a, (usuario) => {
     if (desuscribir) { desuscribir(); desuscribir = null; }
     $("btnSalir").hidden = !usuario;
-    $("usuario").textContent = usuario ? usuario.email : "";
+    $("usuario").textContent = usuario ? usuario.email.split("@")[0] : "";
     $("pantallaLogin").hidden = !!usuario;
     $("app").hidden = !usuario;
     if (!usuario) return;

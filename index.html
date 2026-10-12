@@ -21,8 +21,15 @@
 
   <!-- Pantalla de ingreso (solo si Firebase está configurado) -->
   <section id="pantallaLogin" class="login" hidden>
-    <p>Ingresá con tu cuenta de Google para guardar y ver los registros desde cualquier celular.</p>
-    <button id="btnLogin" class="primario">Ingresar con Google</button>
+    <form id="formLogin" class="form-login">
+      <label>Usuario
+        <input type="text" id="loginUsuario" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+      </label>
+      <label>Contraseña
+        <input type="password" id="loginPass" autocomplete="current-password" required>
+      </label>
+      <button type="submit" id="btnLogin" class="primario">Ingresar</button>
+    </form>
     <p id="loginError" class="error"></p>
   </section>
 

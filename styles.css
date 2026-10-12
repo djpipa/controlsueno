@@ -57,6 +57,12 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .peligro { background: transparent; color: var(--peligro); border-color: var(--peligro); }
 
 .login { text-align: center; padding-top: 40px; }
+.form-login { display: grid; gap: 14px; text-align: left; max-width: 340px; margin: 0 auto; }
+.form-login label { font-size: .9rem; color: var(--suave); }
+.form-login input {
+  display: block; width: 100%; margin-top: 4px; padding: 12px; font: inherit;
+  border-radius: 10px; border: 1px solid var(--borde); background: var(--tarjeta); color: var(--texto);
+}
 .error { color: var(--peligro); font-size: .9rem; }
 .aviso {
   background: #fef3c7; color: #78350f; border-radius: 10px;
