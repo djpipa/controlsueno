@@ -1,7 +1,9 @@
 import { firebaseConfig } from "./firebase-config.js";
+import { VERSION } from "./version.js";
 
 const SDK = "https://www.gstatic.com/firebasejs/10.12.2";
 const DIAS_A_MOSTRAR = 90;
+const TITULO_INICIAL = "Rutina Cielo";
 
 const TIPOS = {
   inicio_sueno: { nombre: "Comienzo sueño", emoji: "😴" },
@@ -17,7 +19,8 @@ const TIPOS = {
 
 const $ = (id) => document.getElementById(id);
 let eventos = [];      // ordenados por ts ascendente
-let almacen = null;    // { agregar, actualizar, borrar }
+let almacen = null;    // { agregar, actualizar, borrar, guardarTitulo }
+let titulo = TITULO_INICIAL;
 let idEditando = null;
 
 // ---------- Formato de fechas (siempre con la hora local del celular) ----------
@@ -31,11 +34,18 @@ const duracion = (ms) => {
   const h = Math.floor(min / 60), m = min % 60;
   return h ? `${h} h ${dos(m)} min` : `${m} min`;
 };
+// "diego@controlsueno-dfe65.firebaseapp.com" -> "Diego"
+const nombreUsuario = (correo) => {
+  const u = (correo || "").split("@")[0];
+  return u ? u[0].toUpperCase() + u.slice(1) : "";
+};
 const nuevoId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 
 // ---------- Almacenamiento local (modo prueba) ----------
 function almacenLocal(alCambiar) {
   const CLAVE = "controlsueno_eventos";
+  const CLAVE_TITULO = "controlsueno_titulo";
+  try { alCambiarTitulo(localStorage.getItem(CLAVE_TITULO)); } catch {}
   const leer = () => { try { return JSON.parse(localStorage.getItem(CLAVE)) || []; } catch { return []; } };
   const escribir = (lista) => { try { localStorage.setItem(CLAVE, JSON.stringify(lista)); } catch {} alCambiar(lista); };
   alCambiar(leer());
@@ -43,10 +53,11 @@ function almacenLocal(alCambiar) {
     agregar: (ev) => escribir([...leer(), ev]),
     actualizar: (id, datos) => escribir(leer().map((e) => (e.id === id ? { ...e, ...datos } : e))),
     borrar: (id) => escribir(leer().filter((e) => e.id !== id)),
+    guardarTitulo: (t) => { try { localStorage.setItem(CLAVE_TITULO, t); } catch {} alCambiarTitulo(t); },
   };
 }
 
-// ---------- Firebase (Firestore + login con Google) ----------
+// ---------- Firebase (Firestore + login con usuario y contraseña) ----------
 async function iniciarFirebase() {
   const [{ initializeApp }, auth, fs] = await Promise.all([
     import(`${SDK}/firebase-app.js`),
@@ -59,7 +70,8 @@ async function iniciarFirebase() {
     localCache: fs.persistentLocalCache({ tabManager: fs.persistentMultipleTabManager() }),
   });
   const col = fs.collection(db, "eventos");
-  let desuscribir = null;
+  const docConfig = fs.doc(db, "config", "app");
+  let desuscribir = [];
 
   // El usuario se guarda en Firebase como un correo interno: "diego" -> "diego@<proyecto>.firebaseapp.com".
   const aCorreo = (u) => (u.includes("@") ? u : `${u}@${firebaseConfig.authDomain}`).trim().toLowerCase();
@@ -81,18 +93,20 @@ async function iniciarFirebase() {
   $("btnSalir").onclick = () => auth.signOut(a);
 
   auth.onAuthStateChanged(a, (usuario) => {
-    if (desuscribir) { desuscribir(); desuscribir = null; }
+    desuscribir.forEach((f) => f());
+    desuscribir = [];
     $("btnSalir").hidden = !usuario;
-    $("usuario").textContent = usuario ? usuario.email.split("@")[0] : "";
+    $("usuario").textContent = usuario ? nombreUsuario(usuario.email) : "";
     $("pantallaLogin").hidden = !!usuario;
     $("app").hidden = !usuario;
     if (!usuario) return;
 
     const desde = Date.now() - DIAS_A_MOSTRAR * 86400000;
     const q = fs.query(col, fs.where("ts", ">=", desde), fs.orderBy("ts", "asc"));
-    desuscribir = fs.onSnapshot(q, (snap) => {
+    desuscribir.push(fs.onSnapshot(q, (snap) => {
       alCambiarEventos(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
-    }, (err) => mostrarToast("Error leyendo datos: " + err.code, false));
+    }, (err) => mostrarToast("Error leyendo datos: " + err.code, false)));
+    desuscribir.push(fs.onSnapshot(docConfig, (d) => alCambiarTitulo(d.data()?.titulo), () => {}));
 
     const fallo = (e) => mostrarToast("No se pudo guardar: " + (e.code || e.message), false);
     // No se espera la respuesta del servidor: la app funciona aunque no haya señal
@@ -101,6 +115,7 @@ async function iniciarFirebase() {
       agregar: ({ id, ...datos }) => fs.setDoc(fs.doc(col, id), { ...datos, por: usuario.email }).catch(fallo),
       actualizar: (id, datos) => fs.updateDoc(fs.doc(col, id), datos).catch(fallo),
       borrar: (id) => fs.deleteDoc(fs.doc(col, id)).catch(fallo),
+      guardarTitulo: (t) => fs.setDoc(docConfig, { titulo: t }, { merge: true }).catch(fallo),
     };
   });
 }
@@ -185,7 +200,7 @@ function totalesDia(k) {
   return partes.join(" · ");
 }
 
-const lineaEvento = (e) => `${TIPOS[e.tipo]?.nombre || e.tipo} ${hora(e.ts)}${e.nota ? ` (${e.nota})` : ""}`;
+const lineaEvento = (e) => `${TIPOS[e.tipo]?.nombre || e.tipo} ${hora(e.ts)}${e.nota ? ` (${e.nota})` : ""}${e.por ? ` · ${nombreUsuario(e.por)}` : ""}`;
 
 function textoResumen() {
   return agruparPorDia(eventos)
@@ -231,9 +246,10 @@ function dibujarHoy() {
     const b = document.createElement("button");
     b.className = "item";
     b.innerHTML = `<span class="hora">${hora(e.ts)}</span>
-      <span class="tipo">${TIPOS[e.tipo]?.emoji || ""} ${TIPOS[e.tipo]?.nombre || e.tipo}<span class="nota"></span></span>
+      <span class="tipo">${TIPOS[e.tipo]?.emoji || ""} ${TIPOS[e.tipo]?.nombre || e.tipo}<span class="nota"></span><span class="quien"></span></span>
       <span class="editar">Editar</span>`;
     b.querySelector(".nota").textContent = e.nota || "";
+    b.querySelector(".quien").textContent = e.por ? `Registró ${nombreUsuario(e.por)}` : "";
     b.onclick = () => abrirEditor(e);
     li.appendChild(b);
     ul.appendChild(li);
@@ -261,8 +277,69 @@ function dibujarResumen() {
   }
 }
 
+function alCambiarTitulo(t) {
+  titulo = (t || "").trim() || TITULO_INICIAL;
+  $("titulo").textContent = titulo;
+  document.title = titulo;
+}
+
+function editarTitulo() {
+  if (!almacen) return;
+  const nuevo = prompt("Nombre de la app:", titulo);
+  if (nuevo === null) return;
+  const limpio = nuevo.trim().slice(0, 40);
+  if (limpio && limpio !== titulo) almacen.guardarTitulo(limpio);
+}
+
+// ---------- Exportar PDF ----------
+const JSPDF = "lib/jspdf.umd.min.js"; // jsPDF 2.5.1 (MIT), copiado en el repo para que funcione sin señal
+let cargaJsPdf = null;
+function cargarJsPdf() {
+  cargaJsPdf ??= new Promise((ok, mal) => {
+    const s = document.createElement("script");
+    s.src = JSPDF;
+    s.onload = () => ok(window.jspdf.jsPDF);
+    s.onerror = () => { cargaJsPdf = null; mal(new Error("sin conexión")); };
+    document.head.appendChild(s);
+  });
+  return cargaJsPdf;
+}
+
+async function exportarPdf() {
+  if (!eventos.length) { mostrarToast("No hay registros para exportar", false); return; }
+  let jsPDF;
+  try { jsPDF = await cargarJsPdf(); }
+  catch (e) { mostrarToast("No se pudo crear el PDF: " + e.message, false); return; }
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const margen = 15, ancho = 210 - 2 * margen, alto = 297;
+  let y = margen;
+  const linea = (texto, { tam = 10, negrita = false, color = 30, sep = 5 } = {}) => {
+    doc.setFont("helvetica", negrita ? "bold" : "normal");
+    doc.setFontSize(tam);
+    doc.setTextColor(color);
+    for (const l of doc.splitTextToSize(texto, ancho)) {
+      if (y > alto - margen) { doc.addPage(); y = margen; }
+      doc.text(l, margen, y);
+      y += sep;
+    }
+  };
+  linea(titulo, { tam: 18, negrita: true, sep: 8 });
+  linea(`Resumen exportado el ${fecha(Date.now())} a las ${hora(Date.now())} · v${VERSION}`, { tam: 9, color: 110, sep: 8 });
+  for (const [k, lista] of agruparPorDia(eventos)) {
+    y += 2;
+    linea(fecha(lista[0].ts), { tam: 13, negrita: true, sep: 6 });
+    const tot = totalesDia(k);
+    if (tot) linea(`Total: ${tot}`, { tam: 9, color: 110 });
+    for (const e of lista) linea(lineaEvento(e));
+  }
+  doc.save(`${titulo} - resumen ${claveDia(Date.now())}.pdf`);
+}
+
 // ---------- Arranque ----------
 function conectarUI() {
+  $("version").textContent = `v${VERSION}`;
+  $("titulo").onclick = editarTitulo;
+  $("btnPdf").onclick = exportarPdf;
   for (const [k, t] of Object.entries(TIPOS)) $("edTipo").add(new Option(`${t.emoji} ${t.nombre}`, k));
 
   document.querySelectorAll(".evento").forEach((b) => (b.onclick = () => almacen && registrar(b.dataset.tipo)));

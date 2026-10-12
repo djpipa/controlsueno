@@ -1,12 +1,20 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Solo el usuario "diego" (usuario y contraseña de Firebase) puede leer y escribir.
+    // Solo los usuarios de la familia (usuario y contraseña de Firebase) pueden leer y escribir.
     function permitido() {
       return request.auth != null
-        && request.auth.token.email == 'diego@controlsueno-dfe65.firebaseapp.com';
+        && request.auth.token.email in [
+          'diego@controlsueno-dfe65.firebaseapp.com',
+          'jessi@controlsueno-dfe65.firebaseapp.com',
+          'daniel@controlsueno-dfe65.firebaseapp.com'
+        ];
     }
     match /eventos/{id} {
+      allow read, write: if permitido();
+    }
+    // Ajustes compartidos de la app (por ejemplo, el título).
+    match /config/{id} {
       allow read, write: if permitido();
     }
   }

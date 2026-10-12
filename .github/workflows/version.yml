@@ -1,0 +1,57 @@
+# Sube la versión de la app (version.js) con cada cambio en main y vuelve a publicar GitHub Pages.
+# Si el cambio ya trae una versión puesta a mano en version.js, se respeta esa.
+name: Versión
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: version
+  cancel-in-progress: false
+
+jobs:
+  subir-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Subir versión
+        id: version
+        env:
+          ANTES: ${{ github.event.before }}
+        run: |
+          if [ -n "$ANTES" ] && git cat-file -e "$ANTES" 2>/dev/null \
+             && git diff --name-only "$ANTES" HEAD | grep -qx version.js; then
+            echo "version.js cambió en este push; se deja como está."
+            echo "cambio=no" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          actual=$(grep -oE '[0-9]+\.[0-9]+\.[0-9]+' version.js)
+          IFS=. read -r mayor menor parche <<< "$actual"
+          nueva="$mayor.$menor.$((parche + 1))"
+          sed -i "s/\"$actual\"/\"$nueva\"/" version.js
+          echo "Versión $actual -> $nueva"
+          echo "nueva=$nueva" >> "$GITHUB_OUTPUT"
+          echo "cambio=si" >> "$GITHUB_OUTPUT"
+
+      - name: Guardar versión
+        if: steps.version.outputs.cambio == 'si'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Versión ${{ steps.version.outputs.nueva }}"
+          git push
+
+      # Los commits hechos por esta acción no disparan la publicación de Pages por sí solos.
+      - name: Publicar en GitHub Pages
+        if: steps.version.outputs.cambio == 'si'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST "repos/${{ github.repository }}/pages/builds"
