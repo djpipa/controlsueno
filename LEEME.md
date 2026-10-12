@@ -24,5 +24,6 @@ La app ya funciona sin configurar nada, en **modo prueba**: guarda los registros
 3. Tocá un botón y se registra con la hora del celular. Si te equivocaste, tocá **Deshacer** en el aviso de abajo, o tocá el registro en la lista para cambiarle la hora, el tipo o borrarlo.
 4. La pestaña **Resumen por día** muestra cada fecha con sus registros, totales y quién registró cada uno. **Exportar PDF** descarga el resumen como PDF y **Copiar resumen** lo deja listo para pegar en WhatsApp o donde quieras.
 5. Tocá el nombre de arriba para cambiarlo; el cambio lo ven todos. Al lado aparece la versión, que sube sola con cada cambio que se publica.
+6. Los colores están en `styles.css` (tema rosa pastel). El estilo anterior quedó guardado en `styles-backup.css`: para volver a él, copiá su contenido en `styles.css`.
 
 Si no hay señal, la app sigue registrando y sincroniza sola cuando vuelve la conexión.

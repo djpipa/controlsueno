@@ -1,29 +1,31 @@
+/* Tema rosa pastel. El estilo anterior quedó guardado en styles-backup.css. */
 :root {
-  --fondo: #f5f5fb;
+  --fondo: #fff5f8;
   --tarjeta: #ffffff;
-  --texto: #1f2033;
-  --suave: #6b6d85;
-  --borde: #e2e3ef;
-  --primario: #4f46e5;
-  --peligro: #dc2626;
-  --sueno: #6366f1;
-  --despierto: #f59e0b;
-  --teta: #ec4899;
-  --mamadera: #0ea5e9;
-  --pis: #eab308;
-  --caca: #92400e;
-  --bano: #06b6d4;
-  --comida: #16a34a;
-  --medicacion: #e11d48;
+  --texto: #4a2a3a;
+  --suave: #9b7286;
+  --borde: #f7d9e4;
+  --primario: #e27aa3;
+  --peligro: #d14a6b;
+  --texto-boton: #4a2a3a;
+  --sueno: #d9c8f5;
+  --despierto: #ffe0b8;
+  --teta: #f9b8d0;
+  --mamadera: #c8e4f7;
+  --pis: #fbefb0;
+  --caca: #e8cfc0;
+  --bano: #c4ece8;
+  --comida: #cfeccb;
+  --medicacion: #f6c1c6;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --fondo: #12131c;
-    --tarjeta: #1d1f2c;
-    --texto: #ececf4;
-    --suave: #9a9cb5;
-    --borde: #2d3042;
-    --primario: #818cf8;
+    --fondo: #2a1d24;
+    --tarjeta: #36262f;
+    --texto: #fbe7ef;
+    --suave: #c9a4b6;
+    --borde: #4a3340;
+    --primario: #f4a6c6;
   }
 }
 
@@ -68,7 +70,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 }
 .error { color: var(--peligro); font-size: .9rem; }
 .aviso {
-  background: #fef3c7; color: #78350f; border-radius: 10px;
+  background: #fde4ee; color: #7a2e52; border-radius: 10px;
   padding: 10px 12px; font-size: .85rem; margin: 12px 0 0;
 }
 
@@ -85,8 +87,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .evento {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
   min-height: 96px; border-radius: 16px; border: 0;
-  font-size: 1.05rem; font-weight: 700; color: #fff;
-  box-shadow: 0 2px 6px rgb(0 0 0 / .12);
+  font-size: 1.05rem; font-weight: 700; color: var(--texto-boton);
+  box-shadow: 0 2px 6px rgb(186 90 130 / .18);
   transition: transform .08s ease, filter .08s ease;
   user-select: none;
 }
@@ -96,7 +98,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .evento[data-tipo="fin_sueno"] { background: var(--despierto); }
 .evento[data-tipo="teta"] { background: var(--teta); }
 .evento[data-tipo="mamadera"] { background: var(--mamadera); }
-.evento[data-tipo="pis"] { background: var(--pis); color: #3b2f00; }
+.evento[data-tipo="pis"] { background: var(--pis); }
 .evento[data-tipo="caca"] { background: var(--caca); }
 .evento[data-tipo="bano"] { background: var(--bano); }
 .evento[data-tipo="comida"] { background: var(--comida); }
@@ -150,12 +152,12 @@ dialog input, dialog select {
 .toast {
   position: fixed; left: 50%; transform: translateX(-50%);
   bottom: calc(18px + env(safe-area-inset-bottom));
-  background: #1f2033; color: #fff; border-radius: 12px;
+  background: #6b3a54; color: #fff; border-radius: 12px;
   padding: 10px 14px; display: flex; gap: 12px; align-items: center;
   box-shadow: 0 4px 16px rgb(0 0 0 / .25); width: max-content; max-width: calc(100vw - 32px);
   z-index: 20;
 }
-.toast .link { color: #a5b4fc; font-weight: 700; }
+.toast .link { color: #ffc4dc; font-weight: 700; }
 [hidden] { display: none !important; }
 
 .marca { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
