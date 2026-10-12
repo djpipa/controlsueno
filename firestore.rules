@@ -1,10 +1,11 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Solo estas cuentas de Google pueden leer y escribir. Cambiá los correos por los de ustedes.
+    // Solo estas cuentas de Google pueden leer y escribir.
     function permitido() {
       return request.auth != null
-        && request.auth.token.email in ['tu-correo@gmail.com', 'correo-de-tu-pareja@gmail.com'];
+        && request.auth.token.email_verified == true
+        && request.auth.token.email in ['fragadiego@gmail.com', 'gnomita@jessi.com'];
     }
     match /eventos/{id} {
       allow read, write: if permitido();
