@@ -3,7 +3,7 @@
   "short_name": "Rutina Cielo",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#f5f5fb",
-  "theme_color": "#4f46e5",
+  "background_color": "#fff5f8",
+  "theme_color": "#e27aa3",
   "icons": [{ "src": "icono.svg", "sizes": "any", "type": "image/svg+xml" }]
 }
